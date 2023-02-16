@@ -88,3 +88,5 @@ def evaluate(model, iterator, criterion):
         for batch in iterator:
             text, text_lengths = batch.text
            
+
+http://mlg.ucd.ie/datasets/bbc.html
