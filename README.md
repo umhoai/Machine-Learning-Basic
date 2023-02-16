@@ -89,4 +89,6 @@ def evaluate(model, iterator, criterion):
             text, text_lengths = batch.text
            
 
-http://mlg.ucd.ie/datasets/bbc.html
+
+
+https://archive.ics.uci.edu/ml/datasets/reuters-21578+text+categorization+collection
