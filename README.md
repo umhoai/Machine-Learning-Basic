@@ -1,94 +1,68 @@
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from transformers import BertTokenizer, BertModel
-from torchtext.data.utils import get_tokenizer
-from torchtext.legacy.data import Field, TabularDataset, BucketIterator
+from transformers import GPT2Tokenizer, GPT2ForSequenceClassification, AdamW
+from sklearn.model_selection import train_test_split
+import pandas as pd
 
-# Define device (GPU or CPU)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Define the dataset
+df = pd.read_csv('dataset.csv')
+labels = df['label'].values
+texts = df['text'].values
 
-# Define tokenizer
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+# Split the dataset into train and test sets
+train_texts, test_texts, train_labels, test_labels = train_test_split(texts, labels, test_size=0.2)
 
-# Define fields for the dataset
-label_field = Field(sequential=False, use_vocab=True)
-text_field = Field(tokenize=tokenizer.tokenize, use_vocab=False, batch_first=True, 
-                   sequential=True, pad_token=tokenizer.pad_token_id, unk_token=tokenizer.unk_token_id)
+# Load the pre-trained GPT-2 tokenizer
+tokenizer = GPT2Tokenizer.from_pretrained('EleutherAI/gpt-j-6B')
 
-# Load the dataset and split into train and test
-train_data, test_data = TabularDataset.splits(
-    path='data',
-    train='train.csv',
-    test='test.csv',
-    format='csv',
-    fields=[('text', text_field), ('label', label_field)]
+# Tokenize the text data
+train_encodings = tokenizer(train_texts, truncation=True, padding=True)
+test_encodings = tokenizer(test_texts, truncation=True, padding=True)
+
+# Convert the data into PyTorch tensors
+train_dataset = torch.utils.data.TensorDataset(
+    torch.tensor(train_encodings['input_ids']),
+    torch.tensor(train_encodings['attention_mask']),
+    torch.tensor(train_labels)
 )
-train_data, valid_data = train_data.split(split_ratio=0.8, stratified=True)
+test_dataset = torch.utils.data.TensorDataset(
+    torch.tensor(test_encodings['input_ids']),
+    torch.tensor(test_encodings['attention_mask']),
+    torch.tensor(test_labels)
+)
 
-# Build the vocabulary using the training data
-label_field.build_vocab(train_data)
+# Load the pre-trained GPT-2 model
+model = GPT2ForSequenceClassification.from_pretrained('EleutherAI/gpt-j-6B')
 
-# Define batch size and iterator
-batch_size = 16
-train_iter, valid_iter, test_iter = BucketIterator.splits(
-    (train_data, valid_data, test_data), batch_size=batch_size, device=device)
-
-# Define the model
-class TransformerModel(nn.Module):
-    def __init__(self, num_labels):
-        super(TransformerModel, self).__init__()
-        self.bert = BertModel.from_pretrained('bert-base-uncased')
-        self.dropout = nn.Dropout(0.1)
-        self.fc = nn.Linear(self.bert.config.hidden_size, num_labels)
-
-    def forward(self, input_ids, attention_mask):
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-        pooled_output = outputs[1]
-        pooled_output = self.dropout(pooled_output)
-        logits = self.fc(pooled_output)
-        return logits
-
-# Define the model parameters
-num_labels = len(label_field.vocab)
-
-# Instantiate the model
-model = TransformerModel(num_labels).to(device)
-
-# Define the loss function and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=2e-5)
-
-# Train the model
-def train(model, iterator, optimizer, criterion):
-    model.train()
-    epoch_loss = 0
-    for batch in iterator:
-        input_ids = batch.text
-        attention_mask = (input_ids != tokenizer.pad_token_id).type(torch.LongTensor)
-        input_ids, attention_mask = input_ids.to(device), attention_mask.to(device)
-        optimizer.zero_grad()
-        logits = model(input_ids, attention_mask)
-        loss = criterion(logits, batch.label)
+# Fine-tune the model on the training dataset
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
+optimizer = AdamW(model.parameters(), lr=1e-5)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=8, shuffle=True)
+for epoch in range(5):
+    for batch in train_loader:
+        input_ids = batch[0].to(device)
+        attention_mask = batch[1].to(device)
+        labels = batch[2].to(device)
+        outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
+        loss = outputs.loss
         loss.backward()
         optimizer.step()
-        epoch_loss += loss.item()
-    return epoch_loss / len(iterator)
+        optimizer.zero_grad()
 
-# Evaluate the model
-def evaluate(model, iterator, criterion):
-    model.eval()
-    epoch_loss = 0
-    with torch.no_grad():
-        for batch in iterator:
-            input_ids = batch.text
-            attention_mask = (input_ids != tokenizer.pad_token_id).type(torch.LongTensor)
-            input_ids, attention_mask = input_ids.to(device), attention_mask.to(device)
-            logits = model(input_ids, attention_mask)
-            loss = criterion(logits, batch.label)
-            epoch_loss += loss.item()
-    return epoch_loss / len(iterator)
-
-# Train and evaluate the model
-num_epochs = 5
-best_valid_loss = float
+# Evaluate the performance of the model on the test dataset
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=8, shuffle=False)
+model.eval()
+with torch.no_grad():
+    num_correct = 0
+    num_total = 0
+    for batch in test_loader:
+        input_ids = batch[0].to(device)
+        attention_mask = batch[1].to(device)
+        labels = batch[2].to(device)
+        outputs = model(input_ids, attention_mask=attention_mask)
+        logits = outputs.logits
+        predicted_labels = torch.argmax(logits, dim=1)
+        num_correct += (predicted_labels == labels).sum().item()
+        num_total += len(labels)
+accuracy = num_correct / num_total
+print('Accuracy:', accuracy)
