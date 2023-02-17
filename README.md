@@ -1,8 +1,5 @@
-# define your PyTorch model
-model = MyPyTorchModel()
+from transformers import GPTNeoForCausalLM, GPT2Tokenizer
 
-# load the TensorFlow checkpoint
-checkpoint = torch.load("my_checkpoint.pth", map_location=torch.device('cpu'))
-
-# set from_tf=True to load a TensorFlow checkpoint into a PyTorch model
-model.load_state_dict(checkpoint['model_state_dict'], from_tf=True)
+model_name = "EleutherAI/gpt-neo-125M"
+tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+model = GPTNeoForCausalLM.from_pretrained(model_name)
