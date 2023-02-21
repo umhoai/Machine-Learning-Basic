@@ -1,5 +1,3 @@
-from transformers import GPTNeoForCausalLM, GPT2Tokenizer
+https://www.kaggle.com/datasets/falgunipatel19/biomedical-text-publication-classification?resource=download
 
-model_name = "EleutherAI/gpt-neo-125M"
-tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-model = GPTNeoForCausalLM.from_pretrained(model_name)
+https://github.com/clinc/oos-eval/tree/master/data
