@@ -1,1 +1,4 @@
-https://github.com/abachaa/LiveQA_MedicalTask_TREC2017/blob/master/TrainingDatasets/TREC-2017-LiveQA-Medical-Train-1.xml
+https://www.kaggle.com/datasets/elvinagammed/intent-recognition-telegram-chatbot-corpus
+
+
+https://www.kaggle.com/datasets/elvinagammed/intent-recognition-chatbot-corpus-stackexchange
