@@ -1,3 +1,2 @@
-# Add annotations to the plot
-for index, value in enumerate(df['Gender'].value_counts()):
-    plt.text(index, value+1, str(value), ha='center')
+for p in ax.patches:
+        ax.annotate('%{:.1f}'.format(p.get_height()), (p.get_x()+0.1, p.get_height()+50))
