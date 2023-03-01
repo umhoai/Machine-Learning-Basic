@@ -1,2 +1,2 @@
 for p in ax.patches:
-        ax.annotate('%{:.1f}'.format(p.get_height()), (p.get_x()+0.1, p.get_height()+50))
+    ax.annotate(int(p.get_width()),((p.get_x() + p.get_width()), p.get_y()), xytext=(1, -18),fontsize=9,color='#004d00',textcoords='offset points', horizontalalignment='right')
