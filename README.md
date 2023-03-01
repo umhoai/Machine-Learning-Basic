@@ -1,2 +1,1 @@
-shuffled_df = df.sample(frac=1)
-shuffled_df = shuffled_df.reset_index(drop=True)
+Exploratory data analysis is the process of using statistical and visual methods to gain insights and understanding from data, in order to formulate hypotheses, identify patterns, and detect anomalies.
