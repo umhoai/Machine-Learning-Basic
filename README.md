@@ -1,3 +1,3 @@
-# Apply SMOTE to the training set
-smote = SMOTE()
-X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
+sns.countplot(y_smote)
+plt.title('Reparition after SMOTE')
+plt.show()
