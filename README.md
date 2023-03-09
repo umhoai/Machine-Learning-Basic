@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 # y is the target variable
 
 # Split the data into train and test sets, ensuring balance
-X_train, X_test, y_train, y_test = train_test_split(
+X_train, X_test, _, _ = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y)
 
 # Count the number of data points in each class in the train set
@@ -22,4 +22,3 @@ for k, v in train_class_counts.items():
 
 # Use the selected indices to create the final train split
 X_train_final = X_train[train_indices]
-y_train_final = y_train[train_indices]
