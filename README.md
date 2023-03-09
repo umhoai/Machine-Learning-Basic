@@ -1,24 +1,29 @@
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedShuffleSplit
 
 # X and y represent your dataset
 # y is the target variable
 
-# Split the data into train and test sets, ensuring balance
-X_train, X_test, _, _ = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y)
+# Define the number of folds for the cross-validation
+num_folds = 1
 
-# Count the number of data points in each class in the train set
-train_class_counts = dict(zip(*np.unique(y_train, return_counts=True)))
+# Define the percentage of data to be used for training
+train_size = 0.6
 
-# Determine the minimum number of data points in any class
-min_class_count = min(train_class_counts.values())
+# Initialize empty arrays for the train and validation data
+X_train, y_train = None, None
 
-# Randomly select data points from each class in the train set, up to the minimum count
-train_indices = []
-for k, v in train_class_counts.items():
-    indices = np.where(y_train == k)[0]
-    np.random.shuffle(indices)
-    train_indices.extend(indices[:min_class_count])
+# Define the cross-validation strategy to generate the train and validation splits
+cv = StratifiedShuffleSplit(n_splits=num_folds, train_size=train_size, random_state=42)
 
-# Use the selected indices to create the final train split
-X_train_final = X_train[train_indices]
+# Loop over the folds and select the train and validation splits
+for train_index, val_index in cv.split(X, y):
+    X_train, X_val = X[train_index], X[val_index]
+    y_train, y_val = y[train_index], y[val_index]
+
+# Check the number of samples in each class in the train set
+unique_labels, counts_train = np.unique(y_train, return_counts=True)
+print(f"Train set class counts: {dict(zip(unique_labels, counts_train))}")
+
+# Check the number of samples in each class in the validation set
+unique_labels, counts_val = np.unique(y_val, return_counts=True)
+print(f"Validation set class counts: {dict(zip(unique_labels, counts_val))}")
