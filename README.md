@@ -1,2 +1,3 @@
-# Tách từ và stemming từng từ trong cột text
-df['stemmed_text'] = df['text'].apply(lambda x: ' '.join([stemmer.stem(word) for word in word_tokenize(x)]))
+# Apply SMOTE to the training set
+smote = SMOTE()
+X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
