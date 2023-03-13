@@ -1,3 +1,3 @@
-def process_number(text):
-    regex_number = r'[0-9]{2,}'
-    return re.sub(regex_number, '@number', text)
+def process_email(text):
+    regex_email = r'[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    return re.sub(regex_email, '@email', text)
