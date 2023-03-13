@@ -1,4 +1,3 @@
-PUNCT_TO_REMOVE = '!"%&\'()*:;<=>?[\\]^_`{}~'
-
-def process_punctuation(text):
-    return text.translate(str.maketrans('', '', PUNCT_TO_REMOVE))
+def process_number(text):
+    regex_number = r'[0-9]{2,}'
+    return re.sub(regex_number, '@number', text)
