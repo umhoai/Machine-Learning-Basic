@@ -30,26 +30,33 @@ def clean_json(json_text):
 df['response_body'] = df['response_body'].apply(lambda x: clean_json(x) if x else '')
 
 
-def missing_values_table(df):
-        # Total missing values
-        mis_val = df.isnull().sum()
-        
-        # Percentage of missing values
-        mis_val_percent = 100 * df.isnull().sum() / len(df)
-        
-        # Make a table with the results
-        mis_val_table = pd.concat([mis_val, mis_val_percent], axis=1)
-        
-        # Rename the columns
-        mis_val_table_ren_columns = mis_val_table.rename(
-        columns = {0 : 'Missing Values', 1 : '% of Total Values'})
-        
-        # Sort the table by percentage of missing descending
-        mis_val_table_ren_columns = mis_val_table_ren_columns[
-            mis_val_table_ren_columns.iloc[:,1] != 0].sort_values('% of Total Values', ascending=False).round(1)
-        
-        # Print some summary information
-        print ("Your selected dataframe has " + str(df.shape[1]) + " columns.\n" "There are " + str(mis_val_table_ren_columns.shape[0]) + " columns that have missing values.")
-        
-        # Return the dataframe with missing information
-        return mis_val_table_ren_columns
+import re
+import pandas as pd
+
+# Define the mask patterns
+mask_patterns = [
+    {"regex_pattern": "((?<=[^A-Za-z0-9])|^)(([0-9a-f]{2,}:){3,}([0-9a-f]{2,}))((?=[^A-Za-z0-9])|$)", "mask_with": "ID"},
+    {"regex_pattern": "((?<=[^A-Za-z0-9])|^)(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})((?=[^A-Za-z0-9])|$)", "mask_with": "IP"},
+    {"regex_pattern": "((?<=[^A-Za-z0-9])|^)([0-9a-f]{6,} ?){3,}((?=[^A-Za-z0-9])|$)", "mask_with": "SEQ"},
+    {"regex_pattern": "((?<=[^A-Za-z0-9])|^)([0-9A-F]{4} ?){4,}((?=[^A-Za-z0-9])|$)", "mask_with": "SEQ"},
+    {"regex_pattern": "((?<=[^A-Za-z0-9])|^)(0x[a-f0-9A-F]+)((?=[^A-Za-z0-9])|$)", "mask_with": "HEX"},
+    {"regex_pattern": "((?<=[^A-Za-z0-9])|^)([\\-\\+]?\\d+)((?=[^A-Za-z0-9])|$)", "mask_with": "NUM"},
+    {"regex_pattern": "(?<=executed cmd )(\".+?\")", "mask_with": "CMD"}
+]
+
+# Define the mask function
+def mask_value(value, patterns):
+    # Check if the value is a string
+    if isinstance(value, str):
+        # Apply each mask pattern to the value
+        for pattern in patterns:
+            regex_pattern = pattern["regex_pattern"]
+            mask_with = pattern["mask_with"]
+            value = re.sub(regex_pattern, mask_with, value)
+    return value
+
+# Load the data into a DataFrame
+df = pd.read_csv('data.csv')
+
+# Mask values in the entire DataFrame
+df = df.applymap(lambda x: mask_value(x, mask_patterns))
