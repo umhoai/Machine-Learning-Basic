@@ -1,1 +1,17 @@
-https://regex-generator.olafneumann.org/?sampleText=2020-03-12T13%3A34%3A56.123Z%20INFO%20%20%5Borg.example.Class%5D%3A%20This%20is%20a%20%23simple%20%23logline%20containing%20a%20%27value%27.&flags=i&selection=17%7CCombination%20%5BAlphanumeric%20characters%20%2B%20Character%5D
+import spacy
+
+nlp = spacy.load("en_core_web_sm")
+
+# Define the text to process
+text = "Steve Jobs was the CEO of Apple."
+
+# Process the text with Spacy
+doc = nlp(text)
+
+# Loop through each named entity in the document
+for entity in doc.ents:
+    # Replace the entity with a generic label
+    text = text.replace(entity.text, entity.label_)
+
+# Print the updated text
+print(text)
