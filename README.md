@@ -1,18 +1,35 @@
-from transformers import BertTokenizer
+from transformers import pipeline, AutoTokenizer, AutoModelForMaskedLM
+import spacy
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+# Load the pre-trained model and tokenizer
+model_name = 'bert-base-cased'
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForMaskedLM.from_pretrained(model_name)
 
-# Chuỗi văn bản cần tạo các masked tokens
-text = "I have a cat named Fluffy. She is very cute."
+# Load the Spacy NER model
+nlp = spacy.load('en_core_web_sm')
 
-# Chuyển đổi chuỗi văn bản thành mã thông báo (tokenized text)
-tokens = tokenizer.encode(text, add_special_tokens=True)
+# Define input text with named entities
+input_text = "I live in New York and work at Google."
 
-# Tạo masked tokens từ mã thông báo
-masked_tokens = tokenizer.mask_tokens(tokens, 0.15, tokenizer.mask_token_id)
+# Extract named entities using Spacy NER
+doc = nlp(input_text)
+entities = []
+for ent in doc.ents:
+    entities.append(ent.text)
 
-# Chuyển đổi masked tokens thành chuỗi văn bản
-masked_text = tokenizer.decode(masked_tokens[0], skip_special_tokens=True)
+# Mask named entities in input text
+for entity in entities:
+    masked_text = input_text.replace(entity, tokenizer.mask_token)
 
-print("Original text: ", text)
-print("Masked text: ", masked_text)
+    # Get the top 5 predictions for the masked entity
+    fill_mask = pipeline('fill-mask', model=model, tokenizer=tokenizer)
+    results = fill_mask(masked_text, top_k=5)
+
+    # Replace the masked entity with the first prediction
+    new_text = masked_text.replace(tokenizer.mask_token, results[0]['token_str'])
+
+    # Update input text with replaced entity
+    input_text = new_text
+
+print(input_text)
