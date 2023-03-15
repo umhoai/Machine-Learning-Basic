@@ -1,6 +1,11 @@
-from transformers import pipeline 
-
-nlp = pipeline("text2text-generation", model="distilbert-base-cased")
-input_text = "Jame Doe's phone number is 555-1234"
-masked_text = nlp(input_text, max_length=512, num_return_sequences=1, do_sample=True, top_p=0.9, mask_token="[MASK]")[0]['generated_text']
-print(masked_text)
+def process_number_phone(text):
+    regex_number_phone = [
+        r'\+\d{2} \d{3} \d{3} \d{4}',
+        r'\(\d{3}\)\d{3}-\d{4}',
+        r'\(\d{3}\)-\d{3}-\d{4}',
+        r'\d{3}-\d{3}-\d{4}',
+        r'[\d\+\s\(\)]{10,}'
+    ]
+    for num_phone in regex_number_phone:
+        text=re.sub(num_phone, ' @numberphone ', text)
+    return text
