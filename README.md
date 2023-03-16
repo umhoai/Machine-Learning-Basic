@@ -1,1 +1,1 @@
-r'^([a-z])\1{3,}$'
+df = df[~df['col1'].str.contains(pattern, regex=True)]
