@@ -1,15 +1,5 @@
-# Hàm xử lý
-def remove_short_strings(s):
-    if isinstance(s, str) and len(s) <= threshold:
-        return np.nan
-    else:
-        return s
-
-# Áp dụng hàm xử lý trên dataframe
-df_cleaned = df.applymap(remove_short_strings)
-
-# Xóa các hàng chứa giá trị NaN
-df_cleaned = df_cleaned.dropna(how='all')
+def process_one_char(string):
+    return " ".join([token.text for token in nlp(string) if len(str(token))>1])
 ----------------
 
 import pandas as pd
