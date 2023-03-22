@@ -98,3 +98,18 @@ df["top_words"] = top_words
 # Print the dataframe
 print(df)
 
+
+
+-------------------
+# Danh sách các chuỗi ký tự
+strings = ['this is a string with more than three words', 'this is another string', 'short string', 'yet another string with more than three words']
+
+# Ngưỡng số từ
+threshold = 3
+
+# Loại bỏ các chuỗi có số từ ít hơn ngưỡng
+filtered_strings = [s for s in strings if len(s.split()) >= threshold]
+
+print(filtered_strings) # Kết quả: ['this is a string with more than three words', 'this is another string', 'yet another string with more than three words']
+
+
