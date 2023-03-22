@@ -88,15 +88,35 @@ print(df)
 
 
 -------------------
-# Danh sách các chuỗi ký tự
-strings = ['this is a string with more than three words', 'this is another string', 'short string', 'yet another string with more than three words']
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Ngưỡng số từ
-threshold = 3
+# Read preprocessed text data from CSV file
+df = pd.read_csv("preprocessed_data.csv")
 
-# Loại bỏ các chuỗi có số từ ít hơn ngưỡng
-filtered_strings = [s for s in strings if len(s.split()) >= threshold]
+# Create TF-IDF vectorizer
+tfidf_vectorizer = TfidfVectorizer()
 
-print(filtered_strings) # Kết quả: ['this is a string with more than three words', 'this is another string', 'yet another string with more than three words']
+# Fit and transform the preprocessed text data
+tfidf_matrix = tfidf_vectorizer.fit_transform(df["text"])
+
+# Get feature names
+feature_names = tfidf_vectorizer.get_feature_names()
+
+# Define query
+query = "important topic"
+
+# Transform query using the vectorizer
+query_tfidf = tfidf_vectorizer.transform([query])
+
+# Extract the most important words for the query
+tfidf_scores = zip(feature_names, query_tfidf.toarray()[0])
+sorted_scores = sorted(tfidf_scores, key=lambda x: x[1], reverse=True)
+top_words = [word for word, score in sorted_scores][:5]
+
+# Print the most important words for the query
+print("Top words for query '{}'".format(query))
+print(", ".join(top_words))
+
 
 
