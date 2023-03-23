@@ -1,5 +1,23 @@
-def process_one_char(string):
-    return " ".join([token.text for token in nlp(string) if len(str(token))>1])
+import random
+
+def add_linking_words(sentence, conjunctions=["and"]):
+    # Split the sentence into a list of phrases using the comma as the delimiter
+    phrases = sentence.split(", ")
+
+    # If there are fewer than two phrases, return the original sentence
+    if len(phrases) < 2:
+        return sentence
+
+    # Add the conjunction between each pair of phrases
+    linked_phrases = [phrases[0]]
+    for phrase in phrases[1:]:
+        conjunction = random.choice(conjunctions)
+        linked_phrases.append(conjunction)
+        linked_phrases.append(phrase)
+
+    # Combine the linked phrases into a single string and return it
+    linked_sentence = " ".join(linked_phrases)
+    return linked_sentence
 ----------------
 
 import pandas as pd
