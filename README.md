@@ -108,5 +108,43 @@ top_words = [word for word, score in sorted_scores][:5]
 print("Top words for query '{}'".format(query))
 print(", ".join(top_words))
 
+--------------------------------------
+def parse_events(events):
+    # Initialize an empty list to store the individual event strings
+    event_strings = []
 
+    # Iterate over each event in the input list and parse it into a string
+    for event in events:
+        if event.startswith("user click button"):
+            # Extract the button name from the event string
+            button_name = event.split(": ")[1]
+            event_string = f"The user clicked the \"{button_name}\" button"
+        elif event.startswith("user view page"):
+            # Extract the page name from the event string
+            page_name = event.split(": ")[1]
+            event_string = f"The user viewed the \"{page_name}\" page"
+        elif event.startswith("user click link"):
+            # Extract the link name from the event string
+            link_name = event.split(": ")[1]
+            # Extract the link location (e.g. order or account) from the event string
+            link_location = event.split(": ")[0].split(" ")[-1]
+            event_string = f"The user clicked the \"{link_name}\" link in the \"{link_location}\" section"
+        elif event.startswith("guest view page"):
+            # Extract the page name from the event string
+            page_name = event.split(": ")[1]
+            event_string = f"A guest viewed the \"{page_name}\" page"
+        else:
+            # If the event string does not match any of the expected formats, skip it
+            continue
+
+        # Add the parsed event string to the list
+        event_strings.append(event_string)
+
+    # Combine the individual event strings into a single sentence
+    sentence = ", and ".join(event_strings[:-1]) + ", while " + event_strings[-1] if len(event_strings) > 1 else event_strings[0]
+
+    # Add a period to the end of the sentence
+    sentence += "."
+
+    return sentence
 
