@@ -2,6 +2,11 @@ def process_one_char(string):
     return " ".join([token.text for token in nlp(string) if len(str(token))>1])
 
 nlp = spacy.load('en_core_web_sm')
+
+stop_words = set(stopwords.words('english'))
+
+df['text'] = df['text'].apply(lambda x: ' '.join([word for word in x.split() if word.lower() not in stop_words]))
+print(df)
 -----------------------
 import random
 
