@@ -1,12 +1,11 @@
-def process_one_char(string):
-    return " ".join([token.text for token in nlp(string) if len(str(token))>1])
-
-nlp = spacy.load('en_core_web_sm')
-
-stop_words = set(stopwords.words('english'))
-
-df['text'] = df['text'].apply(lambda x: ' '.join([word for word in x.split() if word.lower() not in stop_words]))
-print(df)
+def preprocess_wordninja(sentence):      
+        def split_words(x):
+            x=wordninja.split(x)
+            x= [word for word in x if len(word)>1]
+            return x
+        new_sentence=[ ' '.join(split_words(word)) for word in sentence.split() ]
+        return ' '.join(new_sentence)
+    text=preprocess_wordninja(text)
 -----------------------
 import random
 
