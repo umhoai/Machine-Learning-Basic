@@ -1,3 +1,8 @@
+def process_one_char(string):
+    return " ".join([token.text for token in nlp(string) if len(str(token))>1])
+
+nlp = spacy.load('en_core_web_sm')
+-----------------------
 import random
 
 def add_linking_words(sentence, conjunctions=["and"]):
