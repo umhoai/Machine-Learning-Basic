@@ -1,11 +1,8 @@
-def preprocess_wordninja(sentence):      
-        def split_words(x):
-            x=wordninja.split(x)
-            x= [word for word in x if len(word)>1]
-            return x
-        new_sentence=[ ' '.join(split_words(word)) for word in sentence.split() ]
-        return ' '.join(new_sentence)
-    text=preprocess_wordninja(text)
+import wordninja # !pip install wordninja
+def split_attached_words(tweet):
+    words = wordninja.split(tweet)
+    return" ".join(words)
+train_df['clean_text'] = train_df['clean_text'].apply(lambda x : split_attached_words(x))
 -----------------------
 import random
 
