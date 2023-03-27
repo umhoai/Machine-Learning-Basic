@@ -1,9 +1,4 @@
-# Hàm xử lý chuỗi
-def remove_duplicate_words(text):
-    return re.sub(r'\b(\w+)( \1\b)+', r'\1', text)
-
-# Áp dụng hàm xử lý lên cột 'text'
-df['text'] = df['text'].apply(remove_duplicate_words)
+mask_regex = re.sub(r'\d(?=\d{4})', '*', phone_number)mask_regex = re.sub(r'\d(?=\d{4})', '*', phone_number)
 -----------------------
 import random
 
