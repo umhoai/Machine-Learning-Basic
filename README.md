@@ -1,8 +1,4 @@
-import wordninja # !pip install wordninja
-def split_attached_words(tweet):
-    words = wordninja.split(tweet)
-    return" ".join(words)
-train_df['clean_text'] = train_df['clean_text'].apply(lambda x : split_attached_words(x))
+df = df.apply(lambda x: x.str.replace(r'\b(\w+)(\s+\1)+\b', r'\1', regex=True))
 -----------------------
 import random
 
