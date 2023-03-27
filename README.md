@@ -1,4 +1,9 @@
-df = df.apply(lambda x: x.str.replace(r'\b(\w+)(\s+\1)+\b', r'\1', regex=True))
+# Hàm xử lý chuỗi
+def remove_duplicate_words(text):
+    return re.sub(r'\b(\w+)( \1\b)+', r'\1', text)
+
+# Áp dụng hàm xử lý lên cột 'text'
+df['text'] = df['text'].apply(remove_duplicate_words)
 -----------------------
 import random
 
