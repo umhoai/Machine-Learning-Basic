@@ -13,9 +13,4 @@ def remove_key(json_str, key_to_remove):
 df['json_column'] = df['json_column'].apply(lambda x: remove_key(x, 'address'))
 
 -----------------------
-# Tạo masK cho các dòng không chứa NaN
-mask = df.notna().all(axis=1)
-
-# Sử dụng phương thức loc để truy xuất các dòng không chứa NaN
-df_filtered = df.loc[mask]
-
+result = df[df['column_name'].str.startswith('search_string')]
