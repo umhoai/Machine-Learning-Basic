@@ -13,13 +13,9 @@ def remove_key(json_str, key_to_remove):
 df['json_column'] = df['json_column'].apply(lambda x: remove_key(x, 'address'))
 
 -----------------------
-def remove_person_names(text):
-    doc = nlp(text)
-    for ent in doc.ents:
-        if ent.label_ == "PERSON":
-            text = text.replace(ent.text, "")
-    return text
+# Tạo masK cho các dòng không chứa NaN
+mask = df.notna().all(axis=1)
 
-df["text"] = df["text"].apply(remove_person_names)
-
+# Sử dụng phương thức loc để truy xuất các dòng không chứa NaN
+df_filtered = df.loc[mask]
 
