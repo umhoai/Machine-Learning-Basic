@@ -13,22 +13,13 @@ def remove_key(json_str, key_to_remove):
 df['json_column'] = df['json_column'].apply(lambda x: remove_key(x, 'address'))
 
 -----------------------
-
-import spacy
-import pandas as pd
-
-nlp = spacy.load("en_core_web_sm")
-
-df = pd.DataFrame({"text": ["John Smith is a software engineer at Google.", "Mary Johnson works at Microsoft."]})
-
-def detect_person_names(text):
+def remove_person_names(text):
     doc = nlp(text)
-    person_names = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
-    return ", ".join(person_names)
+    for ent in doc.ents:
+        if ent.label_ == "PERSON":
+            text = text.replace(ent.text, "")
+    return text
 
-df["person_names"] = df["text"].apply(detect_person_names)
-
-print(df)
-
+df["text"] = df["text"].apply(remove_person_names)
 
 
