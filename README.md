@@ -15,3 +15,4 @@ df['json_column'] = df['json_column'].apply(lambda x: remove_key(x, 'address'))
 -----------------------
 r'((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*|((www\.)[\S]+( |\s))'
 
+(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])
