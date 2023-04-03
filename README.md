@@ -19,3 +19,7 @@ def split_concatenated_words(text):
 
 # Apply the function to the 'text' column of the DataFrame
 df['text'] = df['text'].apply(split_concatenated_words)
+
+
+keywords = ["important", "key", "critical"]
+df.loc[df['text'].str.contains('|'.join(keywords)), 'text'] = df.loc[df['text'].str.contains('|'.join(keywords)), 'text'].apply(lambda x: wordninja.split(x))
