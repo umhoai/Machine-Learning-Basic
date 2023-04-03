@@ -13,13 +13,22 @@ def remove_key(json_str, key_to_remove):
 df['json_column'] = df['json_column'].apply(lambda x: remove_key(x, 'address'))
 
 -----------------------
-# Define a function to split the concatenated words using Wordninja
-def split_concatenated_words(text):
-    return ' '.join(wordninja.split(text))
+def split_words(text, words_to_split):
+    """
+    A helper function that splits words in a text that are in the given list of words_to_split
+    """
+    for word in words_to_split:
+        if word in text:
+            split_words = wordninja.split(word)
+            for split_word in split_words:
+                text = text.replace(word, split_word)
+    return text
 
-# Apply the function to the 'text' column of the DataFrame
-df['text'] = df['text'].apply(split_concatenated_words)
+# Example dataframe with a text column
+df = pd.DataFrame({'text': ['Hello worldd', 'Iloveyou', 'Whatareyoudoing', 'helloworld']})
 
+# List of words to split
+words_to_split = ['world', 'love', 'doing', 'helloworld']
 
-keywords = ["important", "key", "critical"]
-df.loc[df['text'].str.contains('|'.join(keywords)), 'text'] = df.loc[df['text'].str.contains('|'.join(keywords)), 'text'].apply(lambda x: wordninja.split(x))
+# Apply the split_words function to the text column
+df['text'] = df['text'].apply(split_words, words_to_split=words_to_split)
