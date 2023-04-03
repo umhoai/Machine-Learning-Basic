@@ -13,6 +13,9 @@ def remove_key(json_str, key_to_remove):
 df['json_column'] = df['json_column'].apply(lambda x: remove_key(x, 'address'))
 
 -----------------------
-r'((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*|((www\.)[\S]+( |\s))'
+# Define a function to split the concatenated words using Wordninja
+def split_concatenated_words(text):
+    return ' '.join(wordninja.split(text))
 
-(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])
+# Apply the function to the 'text' column of the DataFrame
+df['text'] = df['text'].apply(split_concatenated_words)
