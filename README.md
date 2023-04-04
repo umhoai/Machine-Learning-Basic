@@ -27,3 +27,9 @@ split_list = ['attached']
 
 # Áp dụng hàm process_text cho từng dòng trong dataframe
 df['processed_text'] = df.apply(process_text, args=(split_list,), axis=1)
+
+
+text = "This is a wordsattached example with wordlist and some other wordsattached"
+split_list = ["attached"]
+processed_text = ' '.join(split_words(text, split_list))
+print(processed_text)
