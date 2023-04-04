@@ -1,26 +1,29 @@
-import re
-import wordninja
+def split_words(s, split_list):
+    # Tách các từ bằng wordninja
+    words = wordninja.split(s)
+    # Tách các từ dính liền được chỉ định trong split_list
+    for split_word in split_list:
+        new_words = []
+        for word in words:
+            if split_word in word:
+                split_parts = word.split(split_word)
+                for i, part in enumerate(split_parts):
+                    new_words.append(part)
+                    if i < len(split_parts)-1:
+                        new_words.append(split_word)
+            else:
+                new_words.append(word)
+        words = new_words
+    return words
 
-def split_words(text, split_words_list):
-    # Tìm kiếm các từ dính liền trong danh sách từ cần tách
-    pattern = r'(' + '|'.join([re.escape(x) for x in split_words_list]) + r')'
+
+def process_text(row, split_list):
+    text = row['text']
+    processed_text = ' '.join(split_words(text, split_list))
+    return processed_text
     
-    # Tách câu thành các từ bằng wordninja và lưu vào danh sách
-    words = wordninja.split(text)
-    
-    # Tạo danh sách kết quả rỗng
-    result = []
-    
-    # Duyệt qua từng từ
-    for word in words:
-        # Kiểm tra xem từ có phải từ dính liền không
-        if re.match(pattern, word):
-            # Nếu đúng, tách từ và thêm vào danh sách kết quả
-            subwords = wordninja.split(word.replace("_", " "))
-            result.extend(subwords)
-        else:
-            # Nếu không, giữ nguyên từ và thêm vào danh sách kết quả
-            result.append(word)
-    
-    # Trả về chuỗi kết quả
-    return " ".join(result)
+    # Chỉ định danh sách từ dính liền cần tách
+split_list = ['attached']
+
+# Áp dụng hàm process_text cho từng dòng trong dataframe
+df['processed_text'] = df.apply(process_text, args=(split_list,), axis=1)
