@@ -13,3 +13,9 @@ def split_words(text, word_list):
     result = " ".join([word.replace("_", " ") for word in words])
     
     return result
+
+# Danh sách các từ cần tách
+word_list = ['wordsattached']
+
+# Áp dụng hàm split_words cho mỗi dòng trong DataFrame
+df['words'] = df['text'].apply(lambda x: split_words(x, word_list))
