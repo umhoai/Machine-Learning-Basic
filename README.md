@@ -20,3 +20,4 @@ def split_words(text, word_list):
     
     # Kết hợp các từ lại thành chuỗi và trả về
     return " ".join(result)
+ 
