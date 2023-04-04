@@ -2,20 +2,21 @@ import re
 import wordninja
 
 def split_words(text, word_list):
-    # Thay thế các từ liên kết trong list bằng dấu gạch dưới
-    for word in word_list:
-        text = re.sub(word, word.replace(" ", "_"), text)
-    
     # Tách các từ bằng wordninja
     words = wordninja.split(text)
     
-    # Thay thế các dấu gạch dưới bằng khoảng trắng và kết hợp thành chuỗi
-    result = " ".join([word.replace("_", " ") for word in words])
+    # Tạo một danh sách rỗng để lưu trữ kết quả
+    result = []
     
-    return result
-
-# Danh sách các từ cần tách
-word_list = ['wordsattached']
-
-# Áp dụng hàm split_words cho mỗi dòng trong DataFrame
-df['words'] = df['text'].apply(lambda x: split_words(x, word_list))
+    # Duyệt qua từng từ trong danh sách đã tách
+    for word in words:
+        # Kiểm tra xem từ có trong danh sách các từ cần tách không
+        if word in word_list:
+            # Nếu có, thay thế bằng từ được tách thành hai từ
+            result.extend(wordninja.split(word.replace("_", " ")))
+        else:
+            # Nếu không, giữ nguyên từ
+            result.append(word)
+    
+    # Kết hợp các từ lại thành chuỗi và trả về
+    return " ".join(result)
