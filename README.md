@@ -1,7 +1,7 @@
-import wordsegment
+import wordninja
 
-# Define a concatenated key
-my_key = 'key1key2key3'
+# Define the concatenated words as a string
+my_string = "drugName medicationType drugclass phamarcyName wdi rx cani wanto"
 
-# Split the key into separate elements using wordsegment
-split_key = wordsegment.segment(my_key)
+# Split the string into separate words using wordninja
+split_words = wordninja.split(my_string)
