@@ -1,23 +1,33 @@
-import json
+import re
 
-def clean_logs(logs):
+def preprocess(logs):
+    # Define the regular expression pattern to match special characters
+    pattern = re.compile('[^\w\s]')
+    
     cleaned_logs = []
+    
     for log in logs:
+        # Remove special characters from the log
+        cleaned_log = re.sub(pattern, '', log)
+        
+        # Convert the log to a dictionary
         try:
-            # Attempt to parse the JSON object
-            json_obj = json.loads(log)
-            
-            # Remove any leading/trailing white space from the keys/values
-            cleaned_obj = {key.strip(): value.strip() for key, value in json_obj.items()}
-            
-            # Append the cleaned object to the list
-            cleaned_logs.append(cleaned_obj)
-        except Exception as e:
-            print(f"Error parsing log: {log}. Error message: {e}")
+            log_dict = eval(cleaned_log)
+        except SyntaxError:
+            print(f"Invalid log: {log}")
+            continue
+        
+        # Remove keys with values containing numbers or names
+        for key, value in list(log_dict.items()):
+            if any(char.isdigit() for char in str(value)) or any(word.isalpha() for word in str(value).split()):
+                del log_dict[key]
+        
+        # Separate connecting words into two separate words
+        for key, value in list(log_dict.items()):
+            if '_' in key:
+                new_key = key.replace('_', ' ')
+                log_dict[new_key] = log_dict.pop(key)
+        
+        cleaned_logs.append(log_dict)
     
     return cleaned_logs
-logs = ['{"id":"123212332", "drugName":"sick","menberName":"21221222" , "firstName":"Dr Mark Join"}']
-
-cleaned_logs = clean_logs(logs)
-
-print(cleaned_logs)
