@@ -1,2 +1,6 @@
-# Xóa các từ lặp lại liền kề nhau
-        item = re.sub(r'\b(\w+)(\s+\1)+\b', r'\1', item)
+from nltk.stem import WordNetLemmatizer
+wnl = WordNetLemmatizer()
+# Lemmatize
+        words = item.split()
+        words = [wnl.lemmatize(word) for word in words]
+        item = ' '.join(words)
