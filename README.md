@@ -1,27 +1,22 @@
-import gensim
-from gensim import corpora, models
+# Define function to parse JSON and flatten it into a string
+def parse_json(json_str):
+    # Convert JSON string to Python object
+    json_obj = json.loads(json_str)
+    # Initialize empty string to hold flattened JSON
+    result = ""
+    # Iterate through keys and values of the dictionary
+    for key, value in json_obj.items():
+        # If the value is another dictionary, recursively call the function on that value
+        if isinstance(value, dict):
+            result += f"{key}: {parse_json(json.dumps(value))}, "
+        # If the value is a list, iterate through the list and call the function on each item
+        elif isinstance(value, list):
+            for item in value:
+                result += f"{key}: {parse_json(json.dumps(item))}, "
+        # If the value is neither a dictionary nor a list, append it to the result string
+        else:
+            result += f"{key}: {value}, "
+    # Return the flattened string, with the last two characters removed (which will be a trailing comma and space)
+    return result[:-2]
 
-# Load corpus
-documents = ["I love programming in Python",
-             "Java is a popular programming language",
-             "Data science is a rapidly growing field",
-             "Machine learning is the future",
-             "Python is the best language for machine learning"]
-
-# Tokenize corpus
-tokenized_documents = [doc.lower().split() for doc in documents]
-
-# Create dictionary
-dictionary = corpora.Dictionary(tokenized_documents)
-
-# Create corpus
-corpus = [dictionary.doc2bow(doc) for doc in tokenized_documents]
-
-# Create LSA model
-lsa_model = models.LsiModel(corpus, num_topics=2, id2word=dictionary)
-
-# Print top 5 important words for each topic
-for i, topic in enumerate(lsa_model.show_topics()):
-    print(f"Topic {i+1}:")
-    print(", ".join([word[0] for word in lsa_model.show_topic(i, topn=5)]))
-    print()
+# Parse the input JSON and remove the "city" key and its value
