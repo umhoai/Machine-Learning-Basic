@@ -1,21 +1,27 @@
-import json
-from gensim.parsing.preprocessing import preprocess_string, remove_stopwords
-from gensim.models import Word2Vec
+import gensim
+from gensim import corpora, models
 
-# Đoạn văn bản JSON
-json_text = '{"title": "The Catcher in the Rye", "author": "J.D. Salinger", "published_year": 1951, "description": "The Catcher in the Rye is a novel by J.D. Salinger. It was first published in 1951.", "reviews": [{"username": "johnsmith", "rating": 4, "text": "I really enjoyed this book. The protagonist is a relatable character and the story is well-written."}, {"username": "janedoe", "rating": 2, "text": "I found this book to be boring and overrated."}]}'
+# Load corpus
+documents = ["I love programming in Python",
+             "Java is a popular programming language",
+             "Data science is a rapidly growing field",
+             "Machine learning is the future",
+             "Python is the best language for machine learning"]
 
-# Phân tích cú pháp JSON và trích xuất nội dung văn bản từ thuộc tính "description"
-json_dict = json.loads(json_text)
-text = json_dict['description']
+# Tokenize corpus
+tokenized_documents = [doc.lower().split() for doc in documents]
 
-# Tiền xử lý dữ liệu bằng cách tách câu thành các từ và loại bỏ các từ không cần thiết
-CUSTOM_FILTERS = [lambda x: x.lower(), remove_stopwords, lambda x: x.isalpha(), lambda x: len(x) > 1]
-processed_text = preprocess_string(text, CUSTOM_FILTERS)
+# Create dictionary
+dictionary = corpora.Dictionary(tokenized_documents)
 
-# Huấn luyện mô hình word2vec trên dữ liệu văn bản đã được tiền xử lý
-model = Word2Vec([processed_text], min_count=1, size=100)
+# Create corpus
+corpus = [dictionary.doc2bow(doc) for doc in tokenized_documents]
 
-# Trích xuất các từ quan trọng từ mô hình word2vec
-important_words = model.wv.index2entity[:3]
-print(important_words)
+# Create LSA model
+lsa_model = models.LsiModel(corpus, num_topics=2, id2word=dictionary)
+
+# Print top 5 important words for each topic
+for i, topic in enumerate(lsa_model.show_topics()):
+    print(f"Topic {i+1}:")
+    print(", ".join([word[0] for word in lsa_model.show_topic(i, topn=5)]))
+    print()
