@@ -1,16 +1,16 @@
-# hàm tính số lần xuất hiện của mỗi từ trong toàn bộ tập dữ liệu
-def word_count(data):
-    words = data.str.lower().str.split()
-    words = words.explode().str.strip('.,!?;')
-    return Counter(words)
+import pandas as pd
 
-# tạo bộ đếm từ cho toàn bộ tập dữ liệu
-word_counts = word_count(df['text'])
-
-# tìm các từ hiếm và các từ xuất hiện nhiều nhất trong toàn bộ tập dữ liệu
-rare_words = [word for word, count in word_counts.items() if count < 2]
-top_words = [word for word, count in word_counts.most_common(3)]
-
-# in ra các từ hiếm và các từ xuất hiện nhiều nhất trong toàn bộ tập dữ liệu
-print('Rare words:', rare_words)
-print('Top words:', top_words)
+def find_rare_and_important_words(df, rare_threshold=0.001, important_threshold=0.1):
+    # Combine all text data into a single Series
+    all_text = pd.Series(df.values.ravel()).str.lower()
+    
+    # Calculate word frequencies
+    word_counts = all_text.str.split(expand=True).stack().value_counts(normalize=True)
+    
+    # Find rare words
+    rare_words = word_counts[word_counts < rare_threshold].index.tolist()
+    
+    # Find important words
+    important_words = word_counts[word_counts > important_threshold].index.tolist()
+    
+    return rare_words, important_words
