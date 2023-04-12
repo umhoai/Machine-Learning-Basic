@@ -1,12 +1,30 @@
 https://jaketae.github.io/study/keyword-extraction/
 
 https://www.kaggle.com/code/ianalyticsgeek/keywords-extraction-using-bert
- traning model chưa tăng cường dữ liệu
+
+
 
 import pandas as pd
+import numpy as np
 
-# Define the desired number of samples in each label category
-n_samples = 2
+df = pd.DataFrame({
+    'label': ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 
+              'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B',
+              'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+    'feature': range(30)
+})
+
+# Calculate the size of each label category
+label_sizes = df.groupby('label').size()
+
+# Calculate the maximum label size
+max_label_size = label_sizes.max()
+
+# Calculate the target sample size for each label category
+target_sizes = label_sizes.apply(lambda x: min(x, max_label_size))
+
+# Calculate the number of samples to take from each label category
+n_samples = target_sizes.values
 
 # Group the dataframe by the label column
 grouped = df.groupby('label')
@@ -20,7 +38,7 @@ for label, group in grouped:
     shuffled = group.sample(frac=1)
     
     # Take the desired number of samples
-    subset = shuffled[:n_samples]
+    subset = shuffled[:n_samples[label]]
     
     # Concatenate the subset with the balanced dataframe
     balanced_df = pd.concat([balanced_df, subset])
@@ -29,4 +47,3 @@ for label, group in grouped:
 balanced_df = balanced_df.sample(frac=1).reset_index(drop=True)
 
 print(balanced_df)
-
