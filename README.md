@@ -1,7 +1,7 @@
 https://jaketae.github.io/study/keyword-extraction/
 
 https://www.kaggle.com/code/ianalyticsgeek/keywords-extraction-using-bert
-
+ traning model chưa tăng cường dữ liệu
 
 import pandas as pd
 import nlpaug.augmenter.word as naw
